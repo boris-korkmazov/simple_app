@@ -19,3 +19,4 @@
 .idea
 .secret
 *.rdoc
+config/database.yml

@@ -38,4 +38,16 @@ describe 'Static pages' do
       expect(page).to have_title "About Us"
     end
   end
+
+  feature 'Contact page' do
+    scenario "should have the content 'Contact'" do
+      visit '/static_pages/contact'
+      expect(page).to have_content 'Contact'
+    end
+
+    scenario "should have the right title 'Contact'" do
+      visit '/static_pages/contact'
+      expect(page).to have_title 'Contact'
+    end
+  end
 end
