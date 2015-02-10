@@ -2,52 +2,54 @@ require 'rails_helper'
 
 
 describe 'Static pages' do
+
+  subject {page}
+
   feature 'Home page' do
+    before do 
+      visit root_path
+      full_title('') 
+    end
     scenario "should have SampleApp" do
-      visit '/static_pages/home'
-      expect(page).to have_content('Sample App')
+      should have_content('Sample App')
     end
 
     scenario "should have the right title" do
-      visit '/static_pages/home'
-      expect(page).to have_title "Home"
+      should have_title "Home"
     end
   end
 
 
   feature "Help page" do
+    before {visit help_path}
     scenario 'Static pages' do
-      visit '/static_pages/help'
-      expect(page).to have_content('Help')
+      should have_content('Help')
     end
 
     scenario "should have the right title 'Help'" do
-      visit '/static_pages/help'
-      expect(page).to have_title "Help"
+      should have_title "Help"
     end
   end
 
   feature 'About page' do
+    before {visit about_path}
     scenario 'should have the content\'About Us\''do
-      visit '/static_pages/about'
-      expect(page).to have_content('About Us')
+      should have_content('About Us')
     end
 
     scenario "should have the right title 'About'" do
-      visit '/static_pages/about'
-      expect(page).to have_title "About Us"
+      should have_title "About Us"
     end
   end
 
   feature 'Contact page' do
+    before {visit contact_path}
     scenario "should have the content 'Contact'" do
-      visit '/static_pages/contact'
-      expect(page).to have_content 'Contact'
+      should have_content 'Contact'
     end
 
     scenario "should have the right title 'Contact'" do
-      visit '/static_pages/contact'
-      expect(page).to have_title 'Contact'
+      should have_title 'Contact'
     end
   end
 end
