@@ -59,15 +59,17 @@ guard :rspec, cmd: "spring rspec" do
       rspec.spec.("controllers/#{m[1]}_controller"),
       rspec.spec.("acceptance/#{m[1]}")
     ]
-  end
 
+
+  end
+  watch(rails.controllers) { |m| rspec.spec.("features/#{m[1]}")}
   # Rails config changes
   watch(rails.spec_helper)     { rspec.spec_dir }
   watch(rails.routes)          { "#{rspec.spec_dir}/routing" }
   watch(rails.app_controller)  { "#{rspec.spec_dir}/controllers" }
 
   # Capybara features specs
-  watch(rails.view_dirs)     { |m| rspec.spec.("features/#{m[1]}") }   
+  watch(rails.view_dirs)     { |m| rspec.spec.("features/#{m[1]}")  }   
 
 
 
