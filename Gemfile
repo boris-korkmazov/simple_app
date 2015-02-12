@@ -57,6 +57,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'cucumber-rails'
+  gem 'database_cleaner'
   gem 'selenium-webdriver'
   gem 'capybara'
   gem 'factory_girl_rails'
