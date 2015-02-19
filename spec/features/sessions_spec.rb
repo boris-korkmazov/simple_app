@@ -69,6 +69,8 @@ describe "Authentication" do
 
       end
 
+      
+
       describe "when attempting to visit a protect page" do
         before do
           visit edit_user_path(user)
