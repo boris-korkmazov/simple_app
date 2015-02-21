@@ -19,6 +19,13 @@ RSpec.describe User, type: :model do
   it { should respond_to :remember_token }
   it { should respond_to :microposts }
   it { should respond_to :feed }
+  it { should respond_to :relationships}
+  it { should respond_to :followed_users }
+  it { should respond_to :following? }
+  it { should respond_to :follow! }
+  it { should respond_to :unfollow! }
+  it { should respond_to :reverse_relationships }
+  it { should respond_to :followers }
 
 
 
@@ -169,5 +176,74 @@ RSpec.describe User, type: :model do
         expect(@user.feed).not_to include(unfollowed_post)
       end
     end
+  end
+
+  describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do 
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+
+    it "should followed_users include other_user" do
+      expect(@user.followed_users).to include other_user
+    end
+
+    describe "followed user" do
+      it "should followers include @user" do
+        expect(other_user.followers).to include @user
+      end      
+    end
+  end
+
+  describe "and unfollowing" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do 
+      @user.save
+      @user.follow!(other_user)
+    end
+    before{ @user.unfollow!(other_user) }
+
+    it { should_not be_following(other_user) }
+    it "should not followed_users include other_user" do
+      expect(@user.followed_users).not_to include other_user
+    end
+  end
+
+  describe "status" do
+    let(:unfollowed_post) do
+      FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+    end
+
+    let(:followed_user) { FactoryGirl.create(:user) }
+
+    before do
+      @user.follow!(followed_user)
+      3.times{ followed_user.microposts.create!(content: "Lorem ipsum") }
+    end
+
+    it "should include newer_micropost" do
+      expect(@user.feed).to include(newer_micropost)
+    end
+
+
+    it "should include older_micropost" do
+      expect(@user.feed).to include(older_micropost)
+    end
+
+
+    it "should not include newer_micropost" do
+      expect(@user.feed).not_to include(unfollowed_post)
+    end
+
+
+    it "should include followed user's microposts" do
+      followed_user.microposts do |micropost|
+        expect(@user.feed).to include(micropost)
+      end
+    end
+
   end
 end

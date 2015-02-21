@@ -9,7 +9,7 @@ describe "User pages" do
       scenario { should have_title('Sign up')}
     end
 
-    feature "proifile page" do
+    feature "profile page" do
       let(:user) { FactoryGirl.create(:user) }
       let!(:m1) {FactoryGirl.create(:micropost, user: user, content:"Foo")}
       let!(:m2) {FactoryGirl.create(:micropost, user: user, content:"Bar")}
@@ -26,6 +26,56 @@ describe "User pages" do
         it {should have_content(m1.content) }
         it {should have_content(m2.content) } 
         it {should have_content(user.microposts.count)}
+      end
+
+      describe "follow/unfollow buttons" do
+        let(:other_user) { FactoryGirl.create(:user) }
+        before { sign_in user }
+
+        feature 'following a user' do
+          before { visit user_path(other_user) }
+
+          scenario "should increment the followed user count" do
+            expect { 
+              click_button "Follow"
+            }.to change(user.followed_users, :count).by(1)
+          end
+
+          scenario "should increment the other user's followers count" do
+            expect { 
+              click_button "Follow"
+            }.to change(other_user.followers, :count).by(1)
+          end
+ 
+          feature "toggling the  button" do
+            before { click_button "Follow"}
+            scenario { should have_xpath('//input[@value="Unfollow"]') }
+          end
+        end 
+
+        feature 'unfollowing a user' do
+          before { 
+            user.follow! other_user
+            visit user_path(other_user) 
+          }
+
+          scenario "should decrement the followed user count" do
+            expect { 
+              click_button "Unfollow"
+            }.to change(user.followed_users, :count).by(-1)
+          end
+
+          scenario "should decrement the other user's followers count" do
+            expect { 
+              click_button "Unfollow"
+            }.to change(other_user.followers, :count).by(-1)
+          end
+
+          feature "toggling the  button" do
+            before { click_button "Unfollow"}
+            scenario { should have_xpath('//input[@value="Follow"]') }
+          end
+        end 
       end
     end
 
@@ -152,4 +202,31 @@ describe "User pages" do
       end
     end
   end
+  describe "following/followers" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:other_user) { FactoryGirl.create(:user) }
+    before {user.follow!(other_user)}
+
+    feature "followed users" do
+      before do
+        sign_in user
+        visit following_user_path(user)
+      end
+
+      scenario { should have_title(full_title('Following')) }
+      scenario { should have_selector('h3', text: 'Following') }
+      scenario { should have_link(other_user.name, href: user_path(other_user)) }
+    end
+
+    feature "followers" do
+      before do
+        sign_in other_user
+        visit followers_user_path(other_user)
+      end
+
+      scenario { should have_title(full_title('Followers')) }
+      scenario { should have_selector('h3', text: 'Followers') }
+      scenario { should have_link(user.name, href: user_path(user)) }
+    end
+  end 
 end

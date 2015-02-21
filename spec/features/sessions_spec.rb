@@ -67,6 +67,17 @@ describe "Authentication" do
           scenario {should have_title('Sign in')}
         end
 
+
+        feature "visiting the following page" do
+          before {visit following_user_path(user)}
+          scenario { should have_title('Sign in') }
+        end
+
+
+        feature "visiting the followers page" do
+          before {visit following_user_path(user)}
+          scenario { should have_title('Sign in') }
+        end
       end
 
       

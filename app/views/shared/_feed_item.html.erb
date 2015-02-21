@@ -9,7 +9,7 @@
   </span>
   <% if current_user?(feed_item.user) %>
     <%=form_for(feed_item, method: 'delete') do |f|%>
-      <%= f.submit 'Удалить', class: 'btn btn-primary' %>
+      <%= f.submit 'delete', class: 'btn btn-primary' %>
     <%end%>
   <% end %>
 
